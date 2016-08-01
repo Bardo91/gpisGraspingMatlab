@@ -60,7 +60,7 @@ frontierPlots = [];
 numXPts = 3 * k;
 removeFrontiers = [];
 
-jMax = 20000;
+jMax = 3000;
 j = 1;
 while numFrontiers > 0 && j < jMax
     if mod(j,100) == 0
