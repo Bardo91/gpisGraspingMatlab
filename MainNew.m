@@ -2,6 +2,7 @@
 close all
 addpath('covMat')
 addpath('grasping')
+addpath('efficientDrawOctomap/3D')
 
 noiseVals = 0.00000;
 noiseGrad = 0.037;
@@ -28,9 +29,9 @@ surfNormals = SurfNormals;
 % c = 1.3254;
 % r = [2 * pi , 0, 0];
 Prior.type = 'N';
-Prior.param(1) = 0.5;
-Prior.Gamma = 1;
-Prior.Sigma = 0.1;
+Prior.param(1) = 0.1;
+Prior.Gamma = 2;
+Prior.Sigma = 0.05;
 Prior.noiseGrad = 0.05;
 Prior.noiseVals = 0.002;
 % 
@@ -38,13 +39,13 @@ Prior.noiseVals = 0.002;
 %% SURFACE
 [meanValue, meanGrad] = computePriorFunctions(Prior)
 
-dist = 0.015;
+dist = 0.005;
 initPoints = locations;%r * [-4;0;-2];
 
 
 [faces, vertices] = computeSurface(locations, surfNormals, ...
     Prior, ...
-    meanValue, meanGrad, initPoints, dist, false);
+    meanValue, meanGrad, initPoints(:,1:5:end), dist, false);
 
 figure
 hold on
