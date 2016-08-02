@@ -19,7 +19,7 @@ prior.mean = @(x) [   1/2/R*((x-cen)'*(x-cen) - R^2);...
                 1/R*((x(2)-cen(2)));...
                 1/R*((x(3)-cen(3)))];
             
-surface = surfaceOctoMap(prior, data, 5);
+surface = surfaceOctoMap(prior, data, 5, true);
 
 figure();
 hold on;

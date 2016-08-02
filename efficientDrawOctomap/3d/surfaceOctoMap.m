@@ -1,4 +1,4 @@
-function [ surfacePoints ] = surfaceOctoMap( prior, dataPoints, iterations)
+function [ surfacePoints ] = surfaceOctoMap( prior, dataPoints, preExpandingIterations, iterations, debugMode)
 %surfaceOctoMap Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -15,7 +15,15 @@ function [ surfacePoints ] = surfaceOctoMap( prior, dataPoints, iterations)
     noiseGrad = prior.noiseGrad;
     mean = prior.mean;
     
+    if(debugMode)
+        display('Computing covariances')
+    end
     K = ComputeFullKder(sigma, gamma, X, noiseVal, noiseGrad);
+    
+    
+    if(debugMode)
+        display('Computing means')
+    end
     for i = 1:m
         mu(((i-1)*4+1):((i-1)*4 +4)) = mean(X(:,i));
     end
@@ -38,10 +46,27 @@ function [ surfacePoints ] = surfaceOctoMap( prior, dataPoints, iterations)
 
     evalFun = @(x) mean(x) + ComputeKderX1X2(sigma, gamma, x, X)*Qmat;
 
-    root = expandCell(root,evalFun, 2);
-    root = expandCell(root,evalFun, 2);
-    root = expandCell(root,evalFun, 2);
-    for iter=3:iterations
+    
+    if(debugMode)
+        display('Computing map')
+    end
+    
+    
+    if(debugMode)
+        display('Preexpanding cells')
+    end
+    
+    for i =1:preExpandingIterations
+        if(debugMode)
+            display(['Preexpanding iteration ', num2str(i)])
+        end
+        root = expandCell(root,evalFun, 2);
+    end
+    
+    for iter=1:iterations
+        if(debugMode)
+            display(['Computing iteration ', num2str(iter)])
+        end
         % Expand tree
         root = expandCell(root, evalFun, 1); 
         % Validate branches
