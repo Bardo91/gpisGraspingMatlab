@@ -4,10 +4,7 @@ addpath('covMat')
 addpath('grasping')
 addpath('efficientDrawOctomap/3D')
 
-load 'crawlerHandlerNoFloorNoWheels'
-
-locations = PartMeans(1:5:end,:);
-surfNormals = SurfNormals(1:5:end,:);
+load 'crawlerHandlerNoFloorNoWheels_cpp'
 
 data = [PartMeans;SurfNormals];
 
@@ -18,12 +15,12 @@ prior.noiseGrad = Prior.noiseGrad;
 
 R = Prior.param(1);
 cen = (sum(PartMeans')/length(PartMeans))';
-% prior.mean = @(x) [   1/2/R*((x-cen)'*(x-cen) - R^2);...
-%                 1/R*((x(1)-cen(1)));...
-%                 1/R*((x(2)-cen(2)));...
-%                 1/R*((x(3)-cen(3)))];
-prior.mean = @(x) [0.5,0,0,0]';
-surface = surfaceOctoMap(prior, data, 3, 2, true);
+prior.mean = @(x) [   1/2/R*((x-cen)'*(x-cen) - R^2);...
+                1/R*((x(1)-cen(1)));...
+                1/R*((x(2)-cen(2)));...
+                1/R*((x(3)-cen(3)))];
+% prior.mean = @(x) [0.5,0,0,0]';
+surface = surfaceOctoMap(prior, data, 3, 3, true);
 
 figure();
 hold on;
@@ -35,6 +32,27 @@ quiver3(data(1,:), data(2,:), data(3,:), data(4,:), data(5,:),data(6,:));
 grid;
 axis equal
 
+[x,y,z] = sphere(20);
+x = x * R;
+y = y * R;
+z = z * R;
+
+for i = 1:21
+    for j=1:21
+        x(i,j) = x(i,j)+ cen(1);
+    end
+end
+for i = 1:21
+    for j=1:21
+        y(i,j) = y(i,j)+ cen(2);
+    end
+end
+for i = 1:21
+    for j=1:21
+        z(i,j) = z(i,j)+ cen(3);
+    end
+end
+surf(x,y,z);
 
 % % For bmw_11
 % cx = -6.1655;
