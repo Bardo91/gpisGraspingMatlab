@@ -9,10 +9,10 @@ load 'data/crawlerHandlerNoFloorNoWheels_cpp'
 data = [PartMeans;SurfNormals];
 
 %% GPIS parameters
-prior.sigma = Prior.Sigma;
-prior.gamma = 5;%Prior.Gamma;
-prior.noiseVal = Prior.noiseVals;
-prior.noiseGrad = Prior.noiseGrad;
+prior.sigma = 0.05;
+prior.gamma = 10;%Prior.Gamma;
+prior.noiseVal = 0.001;
+prior.noiseGrad = 0.1;
 
 % R = 0.5;
 % cen = (sum(PartMeans')/length(PartMeans))';
@@ -23,15 +23,9 @@ prior.noiseGrad = Prior.noiseGrad;
 
 Prior.pos = [0.1650, 0.0766, -3.8024]';
 Prior.param = [0.6,0.4,0.8];
-Prior.rot = [0,0,0];
-cs2 = @(r) (cos(norm(r)/2)^2);
-si2 = @(r) (sin(norm(r)/2)^2);
-cs = @(r) (cos(norm(r)/2));
-si = @(r) (sin(norm(r)/2));
-R = @(r) ([     (r(1)^2 - r(2)^2 - r(3)^2) * si2(r)  + norm(r)^2 * cs2(r)    , 2 * si(r)* (r(1)*r(2)*si(r) + norm(r) * r(3) * cs(r)) , 2 * si(r)* (r(1)*r(3)*si(r) - norm(r) * r(2) * cs(r)) ;
-             2 * si(r)* (r(1)*r(2)*si(r) - norm(r) * r(3) * cs(r)) ,  (r(2)^2 - r(3)^2 - r(1)^2) * si2(r)  + norm(r)^2 * cs2(r)    ,  2 * si(r)* (r(2)*r(3)*si(r) + norm(r) * r(1) * cs(r));
-             , 2 * si(r)* (r(1)*r(3)*si(r) + norm(r) * r(2) * cs(r)) , 2 * si(r)* (r(2)*r(3)*si(r) - norm(r) * r(1) * cs(r)),   (r(3)^2 - r(1)^2 - r(2)^2) * si2(r)  + norm(r)^2 * cs2(r)  ]/norm(r)^2);
-priorRotation = R(Prior.rot);
+Prior.rot = [-45,0,0];
+
+priorRotation = rotz(Prior.rot(3))*roty(Prior.rot(2))*rotx(Prior.rot(1));
 
 A = diag([1/Prior.param(1)^2, 1/Prior.param(2)^2, 1/Prior.param(3)^2]);
 prior.mean = @(x) [Prior.param(1)/2 * ((x-Prior.pos)'* priorRotation' * A * priorRotation * (x-Prior.pos) - 1);...
@@ -54,7 +48,8 @@ axis equal
 
 % Get initial point.
 % candidatePoint = [0.0874, 0.0218, -3.277]';
-candidatePoint = PartMeans(:,10);
+candidatePoint = [-0.0726, 0.2712, -3.498]';
+% candidatePoint = PartMeans(:,10);
 % Converge to surface.
 X = data(1:3, :);    
 m = length(X);     
@@ -82,7 +77,7 @@ evalFun = @(x) mean(x) + ComputeKderX1X2(sigma, gamma, x, X)*Qmat;
 % the surface.
 
 nPointsInCircle = 20;
-points = pointsInCircle(0.1, candidatePoint, -pi/4,pi/2,nPointsInCircle);
+points = pointsInCircle(0.1, candidatePoint, -pi/4,pi/4,nPointsInCircle);
 plot3(points(1,:), points(2,:), points(3,:));
 hold on;
 
