@@ -171,7 +171,12 @@ for angle=angles
         end
     end
     mask = reshape(mask, d1,d1);
-    EA(index) = sum(sum(prob.*mask));
+    normFactor = sum(sum(mask));
+    if normFactor ~= 0
+        EA(index) = sum(sum(prob.*mask))/normFactor;
+    else
+        EA(index) = sum(sum(prob.*mask));
+    end
     index = index +1;
 end
 
