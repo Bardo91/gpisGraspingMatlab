@@ -20,7 +20,6 @@ function [ surfacePoints ] = surfaceOctoMap( prior, dataPoints, preExpandingIter
     end
     K = ComputeFullKder(sigma, gamma, X, noiseVal, noiseGrad);
     
-    
     if(debugMode)
         display('Computing means')
     end
@@ -76,5 +75,8 @@ function [ surfacePoints ] = surfaceOctoMap( prior, dataPoints, preExpandingIter
     surfacePoints  = [];
     cols = [];
     [surfacePoints, cols] = getPointsTree(surfacePoints, cols, root, true);
+    if(debugMode)
+        display('End')
+    end
 end
 
