@@ -29,14 +29,14 @@ function [ surfacePoints ] = surfaceOctoMap( prior, dataPoints, preExpandingIter
 
     %% Efficiend draw
     xLimits = [min(X(1,:)), max(X(1,:))];
-    xLimits(1) = xLimits(1)*1.2;
-    xLimits(2) = xLimits(2) + abs(xLimits(2))*1.2;
+    xLimits(1) = -0.3;
+    xLimits(2) =0.3;
     yLimits = [min(X(2,:)), max(X(2,:))];
-    yLimits(1) = yLimits(1)*1.2;
-    yLimits(2) = yLimits(2) + abs(yLimits(2))*1.2;
+    yLimits(1) =-0.3;
+    yLimits(2) = 0.3;
     zLimits = [min(X(3,:)), max(X(3,:))];
-    zLimits(1) = zLimits(1)*1.2;
-    zLimits(2) = zLimits(2) + abs(zLimits(2))*1.2;
+    zLimits(1) = -3.7;
+    zLimits(2) = -3.4;
     centroid = [sum(xLimits)/2, sum(yLimits)/2,sum(zLimits)/2];
 
     % 2 valid, 1 new, 0 invalid.

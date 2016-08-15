@@ -11,8 +11,8 @@ data = [PartMeans;SurfNormals];
 %% GPIS parameters
 prior.sigma = 0.05;
 prior.gamma = 10;%Prior.Gamma;
-prior.noiseVal = 0.001;
-prior.noiseGrad = 0.1;
+prior.noiseVal = 0.0005;
+prior.noiseGrad = 0.05;
 
 % R = 0.5;
 % cen = (sum(PartMeans')/length(PartMeans))';
@@ -32,7 +32,7 @@ prior.mean = @(x) [Prior.param(1)/2 * ((x-Prior.pos)'* priorRotation' * A * prio
                 Prior.param(1) *  priorRotation' * A * priorRotation * (x-Prior.pos)];
             
 %% Surface plotting
-surface = surfaceOctoMap(prior, data, 3, 2, true);
+surface = surfaceOctoMap(prior, data, 2, 2, true);
 %%
 figure();
 hold on;
@@ -75,7 +75,6 @@ evalFun = @(x) mean(x) + ComputeKderX1X2(sigma, gamma, x, X)*Qmat;
 % Compute contact points. By now because the movement of the gripper is
 % unkown, take a circle of radius Rg and discretice it to get the point in
 % the surface.
-
 nPointsInCircle = 20;
 points = pointsInCircle(0.1, candidatePoint, -pi/4,pi/4,nPointsInCircle);
 plot3(points(1,:), points(2,:), points(3,:));
@@ -89,6 +88,23 @@ for i =1:nPointsInCircle
         plot3(points(1,i), points(2,i), points(3,i), 'gx','MarkerSize',20);
     else
         plot3(points(1,i), points(2,i), points(3,i), 'rx','MarkerSize',20);
+    end
+end
+
+signValuesCircle = sign(valuesCircle(1,:));
+
+possibleContactPoints = {};
+for i = 2:length(signValuesCircle)
+    if signValuesCircle(i) ~= signValuesCircle(i-1)
+        % detected Zero cross
+        contactPoint.pos = (points(:,i) + points(:,i-1))/2;
+        contactPoint.normal = (valuesCircle(2:4,i) + valuesCircle(2:4,i-1))/2;
+        contactPoint.normal = contactPoint.normal/norm(contactPoint.normal);
+        possibleContactPoints{end+1} = contactPoint;
+
+        display(['Detected possible contact point in [', num2str(contactPoint.pos(1)), ',',  num2str(contactPoint.pos(2)), ',',  num2str(contactPoint.pos(3)), ']']);
+        quiver3(contactPoint.pos(1), contactPoint.pos(2), contactPoint.pos(3), contactPoint.normal(1), contactPoint.normal(2), contactPoint.normal(3));
+        plot3(points(1,i), points(2,i), points(3,i), 'b.','MarkerSize',20);
     end
 end
 
