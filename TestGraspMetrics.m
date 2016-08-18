@@ -21,11 +21,14 @@ N = length(contactPoints);
 for i = 1:N
    showAxis(contactPoints{i}.pos, contactPoints{i}.contactFrame); 
 end
+grid;
+axis equal;
 
 G = graspMatrix(contactPoints);
-eigVals = eig(G*G');
-%Get only N positive eigen values
-nPosEigVals = eigVals(end-5:end);
-singularValues = sqrt(nPosEigVals);
+% eigVals = eig(G*G');
+% %Get only N positive eigen values
+% nPosEigVals = eigVals(end-5:end);
+% singularValues = sqrt(nPosEigVals);
+singularValues = svd(G);
 
 Q = min(singularValues)/max(singularValues)
