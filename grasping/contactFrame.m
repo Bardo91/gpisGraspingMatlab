@@ -9,11 +9,15 @@ function [ contactFrame ] = contactFrame( contactNormal )
 if abs(contactNormal'*[1;0;0]) < 0.8
     z = contactNormal;
     y = cross(contactNormal, [1;0;0]);
+    y = y/norm(y);
     x = cross(y, z);
+    x = x/norm(x);
 else
     z = contactNormal;
     x = cross(contactNormal, [0;1;0]);
+    x = x/norm(x);
     y = cross(z, x);
+    y = y/norm(y);
 end
 
 contactFrame = [x,y,z];
